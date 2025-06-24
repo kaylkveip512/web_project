@@ -1,0 +1,231 @@
+{
+  "cars": [
+    {
+      "id": 1,
+      "brand": "BMW",
+      "model": "X5",
+      "year": 2023,
+      "price": 65000,
+      "image": "images/bmw_x5.avif",
+      "description": "Розкішний кросовер BMW X5 2023 року з потужним двигуном, просторим салоном та найсучаснішими технологіями безпеки.",
+      "engine": "3.0L TwinPower Turbo",
+      "fuel": "Бензин",
+      "transmission": "Автоматична",
+      "mileage": 12000,
+      "color": "Чорний металік",
+      "features": [
+        "Шкіряний салон",
+        "Панорамний дах",
+        "Система навігації",
+        "Клімат-контроль",
+        "Камера заднього виду",
+        "Парктронік"
+      ],
+      "seller": {
+        "name": "BMW Центр Київ",
+        "phone": "+380 44 123-45-67",
+        "address": "вул. Хрещатик, 1, Київ"
+      }
+    },
+    {
+      "id": 2,
+      "brand": "Mercedes-Benz",
+      "model": "S-Class",
+      "year": 2025,
+      "price": 45000,
+      "image": "images/mers_2025.avif",
+      "description": "Елегантний седан Mercedes-Benz C-Class з неперевершеним комфортом та вишуканим дизайном.",
+      "engine": "2.0L Turbo",
+      "fuel": "Бензин",
+      "transmission": "Автоматична",
+      "mileage": 8500,
+      "color": "Срібний",
+      "features": [
+        "MBUX система",
+        "LED фари",
+        "Активний круїз-контроль",
+        "Бездротова зарядка",
+        "Підігрів сидінь",
+        "Система контролю сліпих зон"
+      ],
+      "seller": {
+        "name": "Mercedes-Benz Україна",
+        "phone": "+380 44 234-56-78",
+        "address": "просп. Перемоги, 15, Київ"
+      }
+    },
+    {
+      "id": 3,
+      "brand": "Audi",
+      "model": "A6",
+      "year": 2022,
+      "price": 52000,
+      "image": "images/audi_a6_2022.webp",
+      "description": "Преміум седан Audi A6 з інноваційними технологіями та спортивним характером.",
+      "engine": "3.0L TFSI",
+      "fuel": "Бензин",
+      "transmission": "Автоматична",
+      "mileage": 15000,
+      "color": "Синій металік",
+      "features": [
+        "Quattro повний привід",
+        "Virtual Cockpit",
+        "Matrix LED фари",
+        "Bang & Olufsen аудіо",
+        "Адаптивна підвіска",
+        "Система паркування"
+      ],
+      "seller": {
+        "name": "Audi Центр Київ",
+        "phone": "+380 44 345-67-89",
+        "address": "вул. Антоновича, 172, Київ"
+      }
+    },
+    {
+      "id": 4,
+      "brand": "Tesla",
+      "model": "Model 3",
+      "year": 2023,
+      "price": 42000,
+      "image": "images/tesla.jpg",
+      "description": "Електричний седан Tesla Model 3 з автопілотом та великим запасом ходу.",
+      "engine": "Electric Motor",
+      "fuel": "Електрика",
+      "transmission": "Автоматична",
+      "mileage": 5000,
+      "color": "Білий перламутр",
+      "features": [
+        "Автопілот",
+        "Суперчарджинг",
+        "15-дюймовий сенсорний екран",
+        "Over-the-air оновлення",
+        "Скляний дах",
+        "Мобільний додаток"
+      ],
+      "seller": {
+        "name": "Tesla Сервіс Україна",
+        "phone": "+380 44 456-78-90",
+        "address": "вул. Жилянська, 75, Київ"
+      },
+      "batteryCapacity": "75 kWh",
+      "range": "448 км"
+    },
+    {
+      "id": 5,
+      "brand": "Porsche",
+      "model": "911",
+      "year": 2023,
+      "price": 120000,
+      "image": "images/porshe.jpg",
+      "description": "Легендарний спорткар Porsche 911 з неперевершеною динамікою та стилем.",
+      "engine": "3.0L Twin-Turbo",
+      "fuel": "Бензин",
+      "transmission": "Автоматична",
+      "mileage": 2000,
+      "color": "Червоний",
+      "features": [
+        "Спортивна підвіска",
+        "Спортивний вихлоп",
+        "Карбонові вставки",
+        "Alcantara салон",
+        "PASM система",
+        "Launch Control"
+      ],
+      "seller": {
+        "name": "Porsche Центр Україна",
+        "phone": "+380 44 567-89-01",
+        "address": "вул. Велика Васильківська, 1А, Київ"
+      },
+      "acceleration": "3.2 сек (0-100 км/год)",
+      "maxSpeed": "308 км/год"
+    },
+    {
+      "id": 6,
+      "brand": "Volkswagen",
+      "model": "Golf",
+      "year": 2023,
+      "price": 28000,
+      "image": "images/golf.jpg",
+      "description": "Компактний хетчбек Volkswagen Golf з відмінною економічністю та надійністю.",
+      "engine": "1.5L TSI",
+      "fuel": "Бензин",
+      "transmission": "Механічна",
+      "mileage": 18000,
+      "color": "Сірий металік",
+      "features": [
+        "Digital Cockpit",
+        "App-Connect",
+        "Front Assist",
+        "Lane Assist",
+        "Композитні диски",
+        "Кондиціонер"
+      ],
+      "seller": {
+        "name": "Volkswagen Україна",
+        "phone": "+380 44 678-90-12",
+        "address": "просп. Оболонський, 23, Київ"
+      }
+    },
+    {
+      "id": 7,
+      "brand": "Toyota",
+      "model": "Camry",
+      "year": 2023,
+      "price": 35000,
+      "image": "images/camry.jpg",
+      "description": "Надійний седан Toyota Camry з гібридною силовою установкою та економічною витратою палива.",
+      "engine": "2.5L Hybrid",
+      "fuel": "Гібрид",
+      "transmission": "CVT",
+      "mileage": 10000,
+      "color": "Темно-синій",
+      "features": [
+        "Toyota Safety Sense",
+        "Гібридна система",
+        "JBL аудіо система",
+        "Бездротова зарядка",
+        "Dual-zone клімат",
+        "Камера 360°"
+      ],
+      "seller": {
+        "name": "Toyota Центр Київ",
+        "phone": "+380 44 789-01-23",
+        "address": "вул. Борщагівська, 154, Київ"
+      },
+      "fuelConsumption": "4.5 л/100км"
+    },
+    {
+      "id": 8,
+      "brand": "Hyundai",
+      "model": "Tucson",
+      "year": 2022,
+      "price": 32000,
+      "image": "images/tucson.jpg",
+      "description": "Сучасний кросовер Hyundai Tucson з стильним дизайном та багатим оснащенням.",
+      "engine": "1.6L Turbo",
+      "fuel": "Бензин",
+      "transmission": "Автоматична",
+      "mileage": 22000,
+      "color": "Білий",
+      "features": [
+        "SmartSense система безпеки",
+        "10.25\" медіа дисплей",
+        "Панорамний дах",
+        "Підігрів і вентиляція сидінь",
+        "Повний привід",
+        "Wireless Android Auto/Apple CarPlay"
+      ],
+      "seller": {
+        "name": "Hyundai Автоцентр",
+        "phone": "+380 44 890-12-34",
+        "address": "вул. Академіка Корольова, 10, Київ"
+      }
+    }
+  ],
+  "metadata": {
+    "totalCars": 8,
+    "lastUpdated": "2024-06-24T10:00:00Z",
+    "currency": "USD",
+    "location": "Київ, Україна"
+  }
+}
