@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Автомобільний портал Йосипа</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.5/babel.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .car-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.1) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .navbar-brand, .navbar-nav .nav-link {
+            color: white !important;
+        }
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+        .login-form {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+            padding: 0.5rem 2rem;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #5a67d8, #6b46c1);
+        }
+        .update-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .car-image {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+            background: linear-gradient(45deg, #f0f0f0, #ddd);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 3rem;
+        }
+        .price-badge {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+        .feature-badge {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 0.1rem;
+            display: inline-block;
+        }
+        .seller-info {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .error-message {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const localAPI = {
+            async getCars() {
+                try {
+                    const response = await fetch('cars.json');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data.cars;
+                } catch (error) {
+                    console.error('Помилка завантаження cars.json:', error);
+                    return this.getDefaultCars();
+                }
+            },
+
+            async getCarById(id) {
+                try {
+                    const cars = await this.getCars();
+                    return cars.find(car => car.id === id);
+                } catch (error) {
+                    console.error('Помилка пошуку автомобіля:', error);
+                    return null;
+                }
+            },
+
+            async login(email, password) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                if (email === "admin@cars.com" && password === "admin123") {
+                    return { user: { name: "Адміністратор", email: email } };
+                } else {
+                    throw new Error("Невірний email або пароль");
+                }
+            },
+
+            getDefaultCars() {
+                return [
+                    {
+                        id: 1,
+                        brand: "BMW",
+                        model: "X5",
+                        year: 2023,
+                        price: 65000,
+                        image: "./images/bmw-x5.jpg",
+                        description: "Розкішний кросовер BMW X5 2023 року",
+                        engine: "3.0L TwinPower Turbo",
+                        fuel: "Бензин",
+                        transmission: "Автоматична",
+                        mileage: 12000,
+                        color: "Чорний металік",
+                        features: ["Шкіряний салон", "Панорамний дах", "Навігація"],
+                        seller: {
+                            name: "BMW Центр Київ",
+                            phone: "+380 44 123-45-67",
+                            address: "вул. Хрещатик, 1, Київ"
+                        }
+                    },
+                    {
+                        id: 2,
+                        brand: "Mercedes-Benz",
+                        model: "C-Class",
+                        year: 2023,
+                        price: 45000,
+                        image: "./images/mercedes-c-class.jpg",
+                        description: "Елегантний седан Mercedes-Benz C-Class",
+                        engine: "2.0L Turbo",
+                        fuel: "Бензин",
+                        transmission: "Автоматична",
+                        mileage: 8500,
+                        color: "Срібний",
+                        features: ["MBUX система", "LED фари", "Круїз-контроль"],
+                        seller: {
+                            name: "Mercedes-Benz Україна",
+                            phone: "+380 44 234-56-78",
+                            address: "просп. Перемоги, 15, Київ"
+                        }
+                    }
+                ];
+            }
+        };
+
+        function App() {
+            const [cars, setCars] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+            const [selectedCar, setSelectedCar] = useState(null);
+            const [showModal, setShowModal] = useState(false);
+            const [user, setUser] = useState(null);
+            const [lastUpdate, setLastUpdate] = useState(new Date());
+            const [quizAnswers, setQuizAnswers] = useState({});
+            const [quizResult, setQuizResult] = useState(null);
+
+            const loadCars = async () => {
+                try {
+                    setLoading(true);
+                    setError(null);
+                    const carsData = await localAPI.getCars();
+                    setCars(carsData);
+                    setLastUpdate(new Date());
+                } catch (error) {
+                    console.error('Помилка завантаження:', error);
+                    setError('Не вдалося завантажити дані про автомобілі');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            useEffect(() => {
+                loadCars();
+            }, []);
+
+            const showCarDetails = async (carId) => {
+                try {
+                    const car = await localAPI.getCarById(carId);
+                    if (car) {
+                        setSelectedCar(car);
+                        setShowModal(true);
+                    } else {
+                        alert('Автомобіль не знайдено');
+                    }
+                } catch (error) {
+                    console.error('Помилка завантаження деталей:', error);
+                    alert('Помилка завантаження деталей автомобіля');
+                }
+            };
+
+            const CarImage = ({ src, alt, className }) => {
+                const [imageError, setImageError] = useState(false);
+                const [imageLoaded, setImageLoaded] = useState(false);
+
+                const handleImageError = () => {
+                    setImageError(true);
+                };
+
+                const handleImageLoad = () => {
+                    setImageLoaded(true);
+                };
+
+                if (imageError || !src) {
+                    return (
+                        <div className={className}>
+                            <i className="fas fa-car"></i>
+                        </div>
+                    );
+                }
+
+                return (
+                    <img
+                        src={src}
+                        alt={alt}
+                        className={className}
+                        onError={handleImageError}
+                        onLoad={handleImageLoad}
+                        style={{
+                            display: imageLoaded ? 'block' : 'none'
+                        }}
+                    />
+                );
+            };
+
+            const LoginForm = () => {
+                const [email, setEmail] = useState('');
+                const [password, setPassword] = useState('');
+                const [loginLoading, setLoginLoading] = useState(false);
+                const [loginError, setLoginError] = useState('');
+
+                const handleLogin = async (e) => {
+                    e.preventDefault();
+                    setLoginError('');
+
+                    if (!email.trim() || !password.trim()) {
+                        setLoginError('Будь ласка, заповніть всі поля');
+                        return;
+                    }
+
+                    if (!/\S+@\S+\.\S+/.test(email)) {
+                        setLoginError('Введіть коректний email');
+                        return;
+                    }
+
+                    try {
+                        setLoginLoading(true);
+                        const result = await localAPI.login(email, password);
+                        setUser(result.user);
+                        setEmail('');
+                        setPassword('');
+                    } catch (error) {
+                        setLoginError(error.message);
+                    } finally {
+                        setLoginLoading(false);
+                    }
+                };
+
+                if (user) {
+                    return (
+                        <div className="login-form">
+                            <h4 className="text-success">
+                                <i className="fas fa-user-check me-2"></i>
+                                Вітаємо, {user.name}!
+                            </h4>
+                            <button
+                                className="btn btn-outline-secondary"
+                                onClick={() => setUser(null)}
+                            >
+                                Вийти
+                            </button>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="login-form">
+                        <h4 className="mb-3">
+                            <i className="fas fa-sign-in-alt me-2"></i>
+                            Вхід для користувачів
+                        </h4>
+                        <form onSubmit={handleLogin}>
+                            {loginError && (
+                                <div className="alert alert-danger" role="alert">
+                                    {loginError}
+                                </div>
+                            )}
+                            <div className="mb-3">
+                                <label className="form-label">Email:</label>
+                                <input
+                                    type="email"
+                                    className="form-control"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Введіть ваш email"
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Пароль:</label>
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="Введіть пароль"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="btn btn-primary"
+                                disabled={loginLoading}
+                            >
+                                {loginLoading ? (
+                                    <>
+                                        <span className="spinner-border spinner-border-sm me-2"></span>
+                                        Вхід...
+                                    </>
+                                ) : (
+                                    'Увійти'
+                                )}
+                            </button>
+                            <small className="d-block mt-2 text-muted">
+                                Для тесту: admin@cars.com / admin123
+                            </small>
+                        </form>
+                    </div>
+                );
+            };
+
+            const CarQuiz = () => {
+                const questions = [
+                    {
+                        id: 1,
+                        question: "Який тип палива найбільш екологічний?",
+                        options: ["Бензин", "Дизель", "Електрика", "Газ"],
+                        correct: 2
+                    },
+                    {
+                        id: 2,
+                        question: "Яка країна є батьківщиною BMW?",
+                        options: ["Італія", "Франція", "Німеччина", "Японія"],
+                        correct: 2
+                    },
+                    {
+                        id: 3,
+                        question: "Що означає абревіатура SUV?",
+                        options: ["Super Utility Vehicle", "Sport Utility Vehicle", "Special Urban Vehicle", "Standard Universal Vehicle"],
+                        correct: 1
+                    }
+                ];
+
+                const handleAnswerChange = (questionId, answerIndex) => {
+                    setQuizAnswers(prev => ({
+                        ...prev,
+                        [questionId]: answerIndex
+                    }));
+                };
+
+                const checkQuiz = () => {
+                    let correct = 0;
+                    questions.forEach(q => {
+                        if (quizAnswers[q.id] === q.correct) {
+                            correct++;
+                        }
+                    });
+                    setQuizResult({ correct, total: questions.length });
+                };
+
+                return (
+                    <div className="quiz-container">
+                        <h4 className="mb-4">
+                            <i className="fas fa-brain me-2"></i>
+                            Автомобільна вікторина
+                        </h4>
+
+                        {questions.map((question, index) => (
+                            <div key={question.id} className="mb-4">
+                                <h6 className="mb-3">{index + 1}. {question.question}</h6>
+                                {question.options.map((option, optionIndex) => (
+                                    <div key={optionIndex} className="form-check">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            name={`question-${question.id}`}
+                                            id={`q${question.id}-${optionIndex}`}
+                                            onChange={() => handleAnswerChange(question.id, optionIndex)}
+                                        />
+                                        <label className="form-check-label" htmlFor={`q${question.id}-${optionIndex}`}>
+                                            {option}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+
+                        <button className="btn btn-primary me-3" onClick={checkQuiz}>
+                            Перевірити результат
+                        </button>
+
+                        {quizResult && (
+                            <div className={`alert ${quizResult.correct >= 2 ? 'alert-success' : 'alert-warning'} mt-3`}>
+                                <h6>Результат:</h6>
+                                <p>Правильних відповідей: {quizResult.correct} з {quizResult.total}</p>
+                                <p>
+                                    {quizResult.correct >= 2
+                                        ? "Відмінно! Ви добре знаєте автомобілі!"
+                                        : "Непогано, але є над чим працювати!"}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                );
+            };
+
+            return (
+                <div>
+                    {/* Навігація */}
+                    <nav className="navbar navbar-expand-lg navbar-dark">
+                        <div className="container">
+                            <a className="navbar-brand" href="#">
+                                <i className="fas fa-car me-2"></i>
+                                Автомобільний портал
+                            </a>
+                            <div className="navbar-nav ms-auto">
+                                <span className="navbar-text">
+                                    <i className="fas fa-clock me-1"></i>
+                                    Оновлено: {lastUpdate.toLocaleTimeString('uk-UA')}
+                                </span>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <div className="container mt-4">
+                        {}
+                        <LoginForm />
+
+                        {}
+                        <CarQuiz />
+
+                        {}
+                        {error && (
+                            <div className="error-message">
+                                <div className="alert alert-warning">
+                                    <i className="fas fa-exclamation-triangle me-2"></i>
+                                    {error}
+                                    <button
+                                        className="btn btn-outline-primary ms-3"
+                                        onClick={loadCars}
+                                    >
+                                        Спробувати знову
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {}
+                        <div className="row mb-4">
+                            <div className="col-12">
+                                <h2 className="text-white mb-4">
+                                    <i className="fas fa-car me-2"></i>
+                                    Наші автомобілі ({cars.length})
+                                </h2>
+                            </div>
+                        </div>
+
+                        {loading ? (
+                            <div className="text-center py-5">
+                                <div className="spinner-border text-light" role="status">
+                                    <span className="visually-hidden">Завантаження...</span>
+                                </div>
+                                <p className="text-white mt-3">Завантаження автомобілів...</p>
+                            </div>
+                        ) : (
+                            <div className="row">
+                                {cars.map(car => (
+                                    <div key={car.id} className="col-md-6 col-lg-4 mb-4">
+                                        <div className="card car-card h-100">
+                                            <CarImage
+                                                src={car.image}
+                                                alt={`${car.brand} ${car.model}`}
+                                                className="car-image"
+                                            />
+                                            <div className="card-body d-flex flex-column">
+                                                <h5 className="card-title">
+                                                    {car.brand} {car.model}
+                                                </h5>
+                                                <p className="card-text text-muted">
+                                                    {car.year} рік • {car.mileage.toLocaleString()} км
+                                                </p>
+                                                <p className="card-text small">
+                                                    <i className="fas fa-palette me-1"></i>
+                                                    {car.color}
+                                                </p>
+                                                <div className="mb-2">
+                                                    {car.features && car.features.slice(0, 3).map((feature, index) => (
+                                                        <span key={index} className="feature-badge">
+                                                            {feature}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <div className="mt-auto">
+                                                    <div className="d-flex justify-content-between align-items-center mb-3">
+                                                        <span className="price-badge">
+                                                            ${car.price.toLocaleString()}
+                                                        </span>
+                                                        <small className="text-muted">
+                                                            <i className="fas fa-gas-pump me-1"></i>
+                                                            {car.fuel}
+                                                        </small>
+                                                    </div>
+                                                    <button
+                                                        className="btn btn-primary w-100"
+                                                        onClick={() => showCarDetails(car.id)}
+                                                    >
+                                                        <i className="fas fa-info-circle me-2"></i>
+                                                        Детальніше
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {}
+                    {showModal && selectedCar && (
+                        <div className="modal fade show d-block" tabIndex="-1" style={{backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                            <div className="modal-dialog modal-lg">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h5 className="modal-title">
+                                            {selectedCar.brand} {selectedCar.model} ({selectedCar.year})
+                                        </h5>
+                                        <button
+                                            type="button"
+                                            className="btn-close"
+                                            onClick={() => setShowModal(false)}
+                                        ></button>
+                                    </div>
+                                    <div className="modal-body">
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <CarImage
+                                                    src={selectedCar.image}
+                                                    alt={`${selectedCar.brand} ${selectedCar.model}`}
+                                                    className="img-fluid rounded mb-3"
+                                                    style={{height: '300px', width: '100%', objectFit: 'cover'}}
+                                                />
+                                            </div>
+                                            <div className="col-md-6">
+                                                <h6>Опис:</h6>
+                                                <p>{selectedCar.description}</p>
+
+                                                <h6>Характеристики:</h6>
+                                                <ul className="list-unstyled">
+                                                    <li><strong>Двигун:</strong> {selectedCar.engine}</li>
+                                                    <li><strong>Паливо:</strong> {selectedCar.fuel}</li>
+                                                    <li><strong>КПП:</strong> {selectedCar.transmission}</li>
+                                                    <li><strong>Пробіг:</strong> {selectedCar.mileage.toLocaleString()} км</li>
+                                                    <li><strong>Колір:</strong> {selectedCar.color}</li>
+                                                    {selectedCar.batteryCapacity && (
+                                                        <li><strong>Ємність батареї:</strong> {selectedCar.batteryCapacity}</li>
+                                                    )}
+                                                    {selectedCar.range && (
+                                                        <li><strong>Запас ходу:</strong> {selectedCar.range}</li>
+                                                    )}
+                                                    {selectedCar.acceleration && (
+                                                        <li><strong>Розгін:</strong> {selectedCar.acceleration}</li>
+                                                    )}
+                                                    {selectedCar.maxSpeed && (
+                                                        <li><strong>Макс. швидкість:</strong> {selectedCar.maxSpeed}</li>
+                                                    )}
+                                                    {selectedCar.fuelConsumption && (
+                                                        <li><strong>Витрата палива:</strong> {selectedCar.fuelConsumption}</li>
+                                                    )}
+                                                </ul>
+
+                                                <div className="alert alert-info">
+                                                    <h5 className="mb-0">
+                                                        <i className="fas fa-dollar-sign me-2"></i>
+                                                        ${selectedCar.price.toLocaleString()}
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {}
+                                        {selectedCar.features && selectedCar.features.length > 0 && (
+                                            <div className="row mt-3">
+                                                <div className="col-12">
+                                                    <h6>Комплектація:</h6>
+                                                    <div className="mb-3">
+                                                        {selectedCar.features.map((feature, index) => (
+                                                            <span key={index} className="feature-badge me-1 mb-1">
+                                                                <i className="fas fa-check me-1"></i>
+                                                                {feature}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {}
+                                        {selectedCar.seller && (
+                                            <div className="seller-info">
+                                                <h6>
+                                                    <i className="fas fa-store me-2"></i>
+                                                    Продавець
+                                                </h6>
+                                                <p className="mb-2">
+                                                    <strong>{selectedCar.seller.name}</strong>
+                                                </p>
+                                                <p className="mb-1">
+                                                    <i className="fas fa-phone me-2"></i>
+                                                    {selectedCar.seller.phone}
+                                                </p>
+                                                <p className="mb-0">
+                                                    <i className="fas fa-map-marker-alt me-2"></i>
+                                                    {selectedCar.seller.address}
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={() => setShowModal(false)}
+                                        >
+                                            Закрити
+                                        </button>
+                                        <button type="button" className="btn btn-primary">
+                                            <i className="fas fa-phone me-2"></i>
+                                            Зв'язатися
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
